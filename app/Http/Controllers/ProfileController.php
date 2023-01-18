@@ -35,7 +35,7 @@ class ProfileController extends Controller
         $request->validate([
             'username' => ['string', 'max:255', Rule::unique(User::class)->ignore($request->user()->id)],
             'email' => ['email', 'max:255', Rule::unique(User::class)->ignore($request->user()->id)],
-            'avatar' => 'nullable|image|mimes:jpg,png,jpeg,svg|max:2048'
+            'avatar' => 'nullable|image|mimes:jpg,png,jpeg,svg|max:5048'
         ]);
 
         // if ($request->user()->isDirty('email')) {

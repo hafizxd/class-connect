@@ -10,6 +10,7 @@ class CourseItem extends Model
 {
     use HasFactory;
 
+    public $timestamps = true;
     protected $guarded = [];
 
     public function course() {

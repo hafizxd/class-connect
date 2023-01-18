@@ -44,7 +44,7 @@
                             <div class="grid grid-cols-2 items-end">
                                 <div class="flex flex-col text-gray-500 text-sm">
                                     <small><i class="text-base uil uil-video"></i> {{ $course->course_items_count }} videos</small>
-                                    <small><i class="text-base uil uil-clock"></i> {{ date('G\h i\m', strtotime($course->duration)) }} duration</small>
+                                    <small><i class="text-base uil uil-clock"></i> {{ date('G\h i\m s\s', strtotime($course->duration)) }} duration</small>
                                 </div>
 
                                 <div class="flex flex-col items-end text-sm">

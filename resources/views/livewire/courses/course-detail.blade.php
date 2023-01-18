@@ -11,7 +11,7 @@
                 <div class="flex flex-col sm:flex-row sm:justify-between my-5 text-gray-500 text-base">
                     <div class="flex gap-4">
                         <small><i class="text-base uil uil-video"></i> {{ $videoCount }} videos</small>
-                        <small><i class="text-base uil uil-clock"></i> {{ date('G\h i\m', strtotime($course->duration)) }} duration</small>
+                        <small><i class="text-base uil uil-clock"></i> {{ date('G\h i\m s\s', strtotime($course->duration)) }} duration</small>
                     </div>
                     <small>Created on {{ $course->created_at->format('d F Y') }}</small>
                 </div>
@@ -96,9 +96,9 @@
                     </div>
 
                     @if ($course->author->id == auth()->user()->id)
-                        <x-primary-button type="button" onclick="document.querySelector('#linkEdit').click()" class="mt-3 py-3 w-full border-2 rounded-md">
+                        <button onclick="document.querySelector('#linkEdit').click()" class="px-4 bg-gray-800 dark:bg-transparent border-green-500 font-semibold text-xs text-white dark:text-green-500 uppercase tracking-widest hover:bg-green-700 dark:hover:bg-green-500 dark:hover:text-white focus:bg-green-600 dark:focus:bg-green-500 active:bg-gray-900 dark:active:bg-green-400 focus:outline-none focus:ring-1 focus:ring-green-400 dark:focus:ring-offset-green-900 transition ease-in-out duration-300 mt-3 py-3 w-full border-2 rounded-xl" type="button">
                             Edit Class
-                        </x-primary-button>
+                        </button>
                         <a href="{{ route('class.edit', ['course' => $course]) }}" id="linkEdit" class="hidden"></a>
 
                         <x-danger-button wire:click="destroy" class="mb-3 mt-2 py-3 w-full border-2 rounded-md">Delete Class</x-danger-button>

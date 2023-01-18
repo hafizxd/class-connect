@@ -8,7 +8,7 @@
     <label
         class="flex flex-col w-60 h-60 border-4 border-dashed hover:bg-gray-700 hover:border-gray-300 hover:cursor-pointer">
         <div class="relative flex flex-col items-center justify-center pt-10">
-            <img id="preview" class="absolute inset-0 w-60 h-60" src="{{ $src }}">
+            <img id="preview" class="absolute inset-0 w-60 h-60" @if(isset($src) && $src !== "") src="{{ asset('storage/avatars/'.$src) }}" @endif>
             <svg xmlns="http://www.w3.org/2000/svg"
                 class="w-12 h-12 text-gray-400 group-hover:text-gray-600" viewBox="0 0 20 20"
                 fill="currentColor">

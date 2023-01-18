@@ -1,6 +1,8 @@
 <div class="py-12">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="my-5 overflow-x-auto">
+        <h1 class="text-white text-5xl font-bold mb-10 text-center">Admin Page</h1>
+
+        <div class="my-5 overflow-x-auto flex justify-center">
             <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                 <div class="shadow overflow-hidden sm:rounded-lg">
                     <table class="min-w-full text-sm text-gray-400">
@@ -45,7 +47,9 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if ($user->role == 1)
-                                            <x-primary-button wire:click="upgradeUser({{ $user->id }})" class="bg-white  border-2 rounded-md">Upgrade to Mentor</x-primary-button>
+                                        <button wire:click="upgradeUser({{ $user->id }})" class="px-4 py-2 bg-gray-800 dark:bg-transparent border-green-500 font-semibold text-xs text-white dark:text-green-500 uppercase tracking-widest hover:bg-green-700 dark:hover:bg-green-500 dark:hover:text-white focus:bg-green-600 dark:focus:bg-green-500 active:bg-gray-900 dark:active:bg-green-400 focus:outline-none focus:ring-1 focus:ring-green-400 dark:focus:ring-offset-green-900 transition ease-in-out duration-300 border-2 rounded-md">
+                                            Upgrade to Mentor
+                                        </button>
                                         @else 
                                             -
                                         @endif

@@ -49,7 +49,7 @@
 
         <div>
             <x-input-label for="avatar" :value="__('Avatar')" />
-            <x-image-input id="avatar" :name="__('avatar')" class="mt-1" required />
+            <x-image-input id="avatar" :name="__('avatar')" :src="$user->avatar" class="mt-1" required />
             <x-input-error class="mt-2" :messages="$errors->get('username')" />
         </div>
 

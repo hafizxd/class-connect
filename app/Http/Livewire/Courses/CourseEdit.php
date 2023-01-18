@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Courses;
 
 use App\Models\Course;
 use Livewire\Component;
+use App\Models\CourseItem;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,7 @@ class CourseEdit extends Component
 {
     use WithFileUploads;
     
-    public Course $course;
+    public $course;
 
     public $inputCourse;
     public $inputCourseItems;
@@ -22,10 +23,11 @@ class CourseEdit extends Component
         'inputCourse.title' => 'required',
         'inputCourse.thumbnail' => 'nullable|image|max:5024',
         'inputCourse.price' => 'required|numeric|min:1',
-        'inputCourseItems.0.title' => 'required',
-        'inputCourseItems.0.video' => 'nullable|mimetypes:video/x-ms-asf,video/x-matroska,video/x-flv,video/mp4,application/x-mpegURL,video/MP2T,video/3gpp,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/avi|max:302400',
+        'inputCourseItems.*.original_id' => 'nullable',
         'inputCourseItems.*.title' => 'required',
-        'inputCourseItems.*.video' => 'nullable|mimetypes:video/x-ms-asf,video/x-matroska,video/x-flv,video/mp4,application/x-mpegURL,video/MP2T,video/3gpp,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/avi|max:302400',
+        'inputCourseItems.*.video' => 'nullable|max:1002400',
+        // 'inputCourseItems.*.video' => 'nullable|mimetypes:video/x-ms-asf,video/x-matroska,video/x-flv,video/mp4,application/x-mpegURL,video/MP2T,video/3gpp,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/avi|max:1002400',
+        
     ];
 
     public function mount(Course $course) {
@@ -40,13 +42,29 @@ class CourseEdit extends Component
             ]
         ]);
 
-        foreach ($course->courseItems as $item) {
+        $courseItems = CourseItem::where('course_id', $course->id)->get();
+
+        if (count($courseItems) <= 0) {
             $this->fill([
                 'inputCourseItems' => [[
-                    'title' => $item->title,
-                    'video' => ''
+                    'original_id' => '',
+                    'title' => '',
+                    'video' => '',
+                    'original_video' => ''
                 ]]
             ]);
+        } else {
+            $itemsData = [];
+            foreach ($courseItems as $item) {
+                $itemsData[] = [
+                    'original_id' => $item->id,
+                    'title' => $item->title,
+                    'video' => '',
+                    'original_video' => $item->video
+                ];
+            }
+
+            $this->fill([ 'inputCourseItems' => $itemsData ]);
         }
     }
 
@@ -56,18 +74,21 @@ class CourseEdit extends Component
     }
 
     public function newItem() {
-        array_push($this->courseItems, [
+        array_push($this->inputCourseItems, [
+            'original_id' => '',
             'title' => '',
-            'video' => ''
+            'video' => '',
+            'original_video' => ''
         ]);
     }
 
     public function removeItem(int $key) {
-        if (count($this->courseItems) > 1)
-            unset($this->courseItems[$key]);
+        if (count($this->inputCourseItems) > 1)
+            unset($this->inputCourseItems[$key]);
     }
 
     public function update() {
+        // dd($this->inputCourseItems);
         $this->validate();
 
         // upload photo
@@ -87,29 +108,79 @@ class CourseEdit extends Component
             'slug' => Str::slug($inputCourse['title'])
         ]);
 
-        $course = Course::where('id', $this->course->id)->update($inputCourse);
+        $course = Course::where('id', $this->course->id)->first();
+        $course->update($inputCourse);
 
-        // store items
-        // $getID3 = new \getID3;
-        // $totalDuration = 0;
+        $this->storeItems($course);
+        $this->updateDuration($course);
 
-        // $courseItems = $this->courseItems;
-        // foreach ($courseItems as $key => $item) {
-        //     $videoName = 'video-'.Auth::user()->username.'-'.$key.time().'.'.$item['video']->extension();
-        //     $item['video']->storeAs('courses/videos', $videoName);
+        return redirect()->route('class.detail', ['course' => $course]);
+    }
 
-        //     $item['video'] = $videoName;
+    protected function storeItems($course) {
+        $courseItems = $this->inputCourseItems;
+        $createdData = [];
+        $updatedIds = [];
 
-        //     $course->courseItems()->create($item);
+        foreach ($courseItems as $key => $item) {
+            if (!empty($item['video'])) {
+                $videoName = 'video-'.Auth::user()->username.'-'.$key.time().'.'.$item['video']->extension();
+                $item['video']->storeAs('courses/videos', $videoName);
 
-        //     // get video duration
-        //     $file = $getID3->analyze(storage_path('app/public/courses/videos/'.$videoName));
-        //     $totalDuration += $file['playtime_seconds'];
-        // }
+                $item['video'] = $videoName;
+            }
 
-        // $duration = date('H:i:s', $totalDuration);
-        // $course->update([ 'duration' => $duration ]);
+            if (empty($item['original_id'])) { // create new
+                $createdData[] = [
+                    'course_id' => $course->id,
+                    'title' => $item['title'],
+                    'video' => $item['video']
+                ];
+            } else {
+                $updData = [
+                    'title' => $item['title']
+                ];
 
-        return redirect()->route('class.detail', ['course' => $this->course]);
+                if (!empty($item['video']))
+                    $updData['video'] = $item['video'];
+
+                $course->courseItems()
+                    ->where('id', $item['original_id'])
+                    ->update($updData);
+
+                $updatedIds[] = $item['original_id'];
+            }
+        }
+
+        $excludedItems = $course->courseItems()->whereNotIn('id', $updatedIds)->get();
+
+        foreach ($excludedItems as $item)  {
+            if(Storage::exists('courses/videos/'.$item->video))
+                Storage::delete('courses/videos/'.$item->video);
+
+            $item->delete();
+        }
+
+        if (count($createdData) > 0)
+            $course->courseItems()->insert($createdData);
+    }
+
+    protected function updateDuration($course) {
+        $getID3 = new \getID3;
+        $totalDuration = 0;
+
+        $courseItems = CourseItem::where('course_id', $course->id)->get();
+
+        foreach ($courseItems as $item) {
+            // get video duration
+            $file = $getID3->analyze(storage_path('app/public/courses/videos/'.$item->video));
+            if (isset($file['playtime_seconds']))
+                $totalDuration += $file['playtime_seconds'];
+        }
+
+        $dt = new \DateTime('now', new \DateTimeZone('UTC')); 
+        $dt->setTimestamp($totalDuration);
+        $duration = $dt->format('H:i:s');
+        $course->update([ 'duration' => $duration ]);
     }
 }

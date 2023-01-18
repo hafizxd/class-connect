@@ -37,7 +37,7 @@
                     </x-card>
                 </div>
         
-                <div>
+                <div x-data="videoItem()">
                     <h1 class="text-3xl text-white mb-3">Class Videos</h1>
         
                     @foreach ($courseItems as $key => $item)
@@ -53,10 +53,15 @@
         
                                 <div class="mb-5">
                                     <x-input-label for="itemVideo_{{$key}}" :value="__('Video')" />
-                                    <input type="file" wire:model.defer="courseItems.{{$key}}.video" id="itemVideo_{{$key}}" accept="video/*">
+                                    <input type="file" wire:model.defer="courseItems.{{$key}}.video" id="itemVideo_{{$key}}" accept="video/*" @change="showPreview(event, '{{ $key }}')">
                                     @error('courseItems.'.$key.'.video')
                                         <span class="block text-sm text-red-600 dark:text-red-400 space-y-1 mt-2">{{ $message }}</span>
                                     @enderror
+
+                                    <div class="text-white my-2" wire:loading wire:target="inputCourseItems.{{$key}}.video">Uploading...</div>
+
+                                    <video wire:ignore id="itemPreview_{{$key}}" controls class="w-full h-full hidden">
+                                    </video>
                                 </div>
                             </div>
         
@@ -78,7 +83,32 @@
 
             <x-primary-button class="my-10 py-5 w-full">
                 Create Class
+                <span wire:loading>(Saving...)</span>
             </x-primary-button>
         </form>
     </div>
 </div>
+
+<script>
+    function videoItem() {
+        return {
+            showPreview(event, key) {
+                console.log(key);
+                if (event.target.files.length > 0) {
+                    let imageFile = event.target.files[0];
+
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        let preview = document.querySelector("#itemPreview_" + key);
+                        preview.src = reader.result;
+
+                        let prevParent = document.querySelector("#itemPreview_" + key);
+                        prevParent.classList.remove('hidden');
+                        prevParent.classList.add('block');
+                    }
+                    reader.readAsDataURL(event.target.files[0]);
+                }
+            }
+        }
+    }
+</script>

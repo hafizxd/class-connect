@@ -46,7 +46,7 @@
         </main>
 
         <div class="flex justify-center items-center h-24 text-gray-500 text-sm dark:bg-slate-900">
-            <p>&copy; 2023 Fincom</p>
+            <p>&copy; 2023 ClassConnect</p>
         </div>
     </div>
 

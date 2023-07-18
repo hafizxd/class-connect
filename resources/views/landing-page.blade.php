@@ -8,9 +8,9 @@
                         <div class="w-full md:w-1/2 md:px-3">
                             <div class="w-full pb-6 space-y-6 sm:max-w-md lg:max-w-lg md:space-y-4 lg:space-y-8 xl:space-y-9 sm:pr-5 lg:pr-0 md:pb-0">
                                 <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl">
-                                    <span class="block text-green-500 xl:inline">Improve Your Finance Skills.</span>
+                                    <span class="block text-green-500 xl:inline">Improve Your Skills Together.</span>
                                 </h1>
-                                <p class="mx-auto text-base text-gray-400 sm:max-w-md lg:text-xl md:max-w-3xl">A forum for exchanging information and obtaining advice related to financial issues, with access to experienced professionals for guidance.</p>
+                                <p class="mx-auto text-base text-gray-400 sm:max-w-md lg:text-xl md:max-w-3xl">A forum for exchanging information and obtaining advice from various community, with access to experienced professionals for guidance.</p>
                                 <div class="relative flex flex-col sm:flex-row sm:space-x-4">
                                     <a href="{{ route('forum.index') }}" class="flex items-center w-full px-6 py-3 mb-3 text-lg text-white bg-green-600 rounded-xl sm:mb-0 hover:bg-green-700 sm:w-auto">
                                         Join Us
@@ -39,7 +39,7 @@
 
                         <h1 class="text-white text-2xl sm:text-3xl font-semibold">Forum</h1>
 
-                        <p class="text-gray-400 text-sm sm:text-base">A platform that aims to establish a comprehensive collection of questions and answers related to finance where people can find and share solutions.</p>
+                        <p class="text-gray-400 text-sm sm:text-base">A platform that aims to establish a comprehensive collection of questions and answers related to various topics where people can find and share solutions.</p>
                     </x-card>
 
                     <x-card class="flex flex-col text-center p-8 gap-7 shadow-lg h-full">
@@ -49,7 +49,7 @@
 
                         <h1 class="text-white text-2xl sm:text-3xl font-semibold">Class</h1>
 
-                        <p class="text-gray-400 text-sm sm:text-base">A platform that offers various classes taught by experienced professionals to enhance your financial skills.</p>
+                        <p class="text-gray-400 text-sm sm:text-base">A platform that offers various classes taught by experienced professionals to enhance your skills.</p>
                     </x-card>
                 </div>
 

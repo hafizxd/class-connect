@@ -50,6 +50,6 @@ class ThreadDetail extends Component
     {
         Thread::destroy($this->thread->id);
 
-        return redirect()->route('thread.index');
+        return redirect()->route('thread.index', 1);
     }
 }

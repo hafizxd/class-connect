@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Threads;
 
 use App\Models\Thread;
+use App\Models\Forum;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -15,9 +16,15 @@ class ThreadList extends Component
 
     protected $listeners = ['thread-added' => '$refresh'];
 
+    public Forum $forum;
+
+    public function mount(Forum $forum) {
+        $this->forum = $forum;
+    }
+
     public function render()
     {
-        $threads = Thread::with(['author'])->withCount(['likes', 'replies', 'nestedReplies']);
+        $threads = Thread::with(['author'])->where('forum_id', $this->forum->id)->withCount(['likes', 'replies', 'nestedReplies']);
 
         if (isset($this->search)) {
             $threads->where(function ($query) {
@@ -43,7 +50,8 @@ class ThreadList extends Component
         $threads = $threads->paginate(10);
 
         return view('livewire.threads.thread-list', [
-            'threads' => $threads
+            'threads' => $threads,
+            'forum' => $this->forum
         ]);
     }
 }

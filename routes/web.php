@@ -8,6 +8,7 @@ use App\Http\Livewire\Courses\CourseDetail;
 use App\Http\Livewire\Courses\CourseEdit;
 use App\Http\Livewire\Threads\ThreadList;
 use App\Http\Livewire\Threads\ThreadDetail;
+use App\Http\Livewire\Forums\ForumList;
 
 use App\Http\Livewire\Admin\Users\UserList;
 
@@ -27,9 +28,13 @@ Route::get('/', function () {
 })->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::group(['prefix' => '/threads', 'as' => 'thread.'], function () {
-        Route::get('/', ThreadList::class)->name('index');
-        Route::get('/{thread:slug}', ThreadDetail::class)->name('detail');
+    Route::group(['prefix' => '/forums'], function () {
+        Route::get('/', ForumList::class)->name('forum.index');
+
+        Route::group(['prefix' => '/{forum:id}', 'as' => 'thread.'], function () {
+            Route::get('/', ThreadList::class)->name('index');
+            Route::get('/{thread:slug}', ThreadDetail::class)->name('detail');
+        });
     });
     
     Route::group(['prefix' => '/classes', 'as' => 'class.'], function () {

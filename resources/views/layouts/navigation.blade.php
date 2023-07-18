@@ -14,7 +14,7 @@
 
             <!-- Navigation Links -->
             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <x-nav-link :href="route('thread.index')" :active="request()->routeIs('thread.*')">
+                <x-nav-link :href="route('forum.index')" :active="request()->routeIs('thread.*') || request()->routeIs('forum.*')">
                     FORUM
                 </x-nav-link>
                 <x-nav-link :href="route('class.index')" :active="request()->routeIs('class.*')">
@@ -24,14 +24,11 @@
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
-                @if(Auth::user() !== null)
+                @if (Auth::user() !== null)
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <div class="flex">
-                                <img 
-                                class="w-8 h-8 rounded-full" 
-                                src="{{ isset(auth()->user()->avatar) ? asset('storage/avatars/'.auth()->user()->avatar) : asset('assets/images/avatar-default.png') }}" 
-                                alt="User avatar">        
+                                <img class="w-8 h-8 rounded-full" src="{{ isset(auth()->user()->avatar) ? asset('storage/avatars/' . auth()->user()->avatar) : asset('assets/images/avatar-default.png') }}" alt="User avatar">
 
                                 <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-xl text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                                     <div>{{ Auth::user()->username }}</div>
@@ -54,8 +51,7 @@
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
 
-                                <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault();
+                                <x-dropdown-link :href="route('logout')" onclick="event.preventDefault();
                                                     this.closest('form').submit();">
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
@@ -74,8 +70,8 @@
             <div class="-mr-2 flex items-center sm:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-xl text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        <path :class="{ 'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -83,7 +79,7 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Home') }}
@@ -92,14 +88,14 @@
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-            @if(Auth::user() !== null)
+            @if (Auth::user() !== null)
                 <div class="px-4">
                     <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
                     <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
                 </div>
 
                 <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('thread.index')" :active="request()->routeIs('thread.*')">
+                    <x-responsive-nav-link :href="route('forum.index')" :active="request()->routeIs('thread.*') || request()->routeIs('forum.*')">
                         Forum
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('class.index')" :active="request()->routeIs('class.*')">
@@ -114,14 +110,13 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
 
-                        <x-responsive-nav-link :href="route('logout')"
-                                onclick="event.preventDefault();
+                        <x-responsive-nav-link :href="route('logout')" onclick="event.preventDefault();
                                             this.closest('form').submit();">
                             {{ __('Log Out') }}
                         </x-responsive-nav-link>
                     </form>
                 </div>
-            @else 
+            @else
                 <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')">
                     Log In
                 </x-responsive-nav-link>

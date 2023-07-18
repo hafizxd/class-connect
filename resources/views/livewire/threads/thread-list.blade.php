@@ -1,12 +1,12 @@
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div x-data="{openCreate: false}" x-cloak class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 grid-flow-col gap-10">
+        <div x-data="{ openCreate: false }" x-cloak class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 grid-flow-col gap-10">
             <div class="col-span-1 hidden md:inline">
                 <x-primary-button @click="openCreate = true" class="mb-4 w-full rounded-full py-4">
                     Create Discussion
                 </x-primary-button>
 
-                @livewire('side.top-user')
+                @livewire('side.forum-description', ['forum' => $forum])
             </div>
 
             <div class="col-span-1 md:col-span-2 lg:col-span-3 mx-4 sm:mx-0">
@@ -14,11 +14,31 @@
                     Create Discussion
                 </x-primary-button>
 
-                <div @card-closed.window="openCreate = $event.detail.openCreate" x-show="openCreate" class="mb-5" x-transitio>
-                    @livewire('threads.thread-create')
+                <div @card-closed.window="openCreate = $event.detail.openCreate" x-show="openCreate" class="mb-5" x-transition>
+                    @livewire('threads.thread-create', ['forumId' => $forum->id])
                 </div>
-                
+
                 <div>
+                    <div class="rounded-t-xl overflow-hidden max-h-80 mb-14 relative">
+                        <div class="w-full h-full absolute z-0" style="background: linear-gradient(to bottom, rgba(15, 23, 42, 0) 0%, rgb(15, 23, 42, 1) 95%);"></div>
+                        <img src="{{ asset('storage/forums/' . $forum->image) }}" alt="" class="w-full">
+
+                        <div class="absolute bottom-0 z-10 px-5 md:px-10">
+                            <h1 class="text-[40px] md:text-[70px] font-black text-slate-300">{{ $forum->name }}</h1>
+                            <h4 class="text-lg font-medium text-green-500">
+                                <span class="text-sm">
+                                    <i class="uil uil-tag-alt"></i>
+                                    @php $categories = []; @endphp
+                                    @foreach ($forum->categories as $category)
+                                        @php $categories[] = $category->name; @endphp
+                                    @endforeach
+                                    {{ implode(', ', $categories) }}
+                                </span>
+                            </h4>
+                        </div>
+                    </div>
+
+
                     {{-- Filter --}}
                     <div class="flex justify-between">
                         <select wire:model="order" class="text-xs sm:text-sm rounded-full w-40 px-4 py-3 bg-slate-900 border-green-500 placeholder-gray-400 text-gray-300 focus:border-green-500 hover:cursor-pointer">
@@ -33,15 +53,12 @@
 
                     {{-- List Thread --}}
                     <div>
-                        @foreach($threads as $thread)
+                        @foreach ($threads as $thread)
                             <div class="my-5 hover:cursor-pointer">
-                                <a href="{{ route('thread.detail', ['thread' => $thread]) }}">
+                                <a href="{{ route('thread.detail', ['forum' => $forum->id, 'thread' => $thread]) }}">
                                     <x-card class="{{ auth()->user()->id === $thread->author->id ? 'border-2 border-green-500' : '' }} flex flex-col sm:flex-row sm:justify-between sm:gap-10 p-6">
                                         <div class="sm:hidden flex gap-4 items-center mb-3">
-                                            <img 
-                                                class="w-10 h-10 rounded-lg" 
-                                                src="{{ isset($thread->author->avatar) ? asset('storage/avatars/'.$thread->author->avatar) : asset('assets/images/avatar-default.png') }}" 
-                                                alt="User avatar">
+                                            <img class="w-10 h-10 rounded-lg" src="{{ isset($thread->author->avatar) ? asset('storage/avatars/' . $thread->author->avatar) : asset('assets/images/avatar-default.png') }}" alt="User avatar">
                                             <div class="w-full break-words">
                                                 <p class="text-xs">{{ $thread->author->username }}</p>
                                                 <small class="text-xs text-gray-500">{{ $thread->author->credit }} Credit</small>
@@ -53,12 +70,12 @@
                                                 <div class="sm:mb-3 font-medium text-base sm:text-lg">
                                                     <h3>{{ $thread->title }}</h3>
                                                 </div>
-                                
+
                                                 <div class="font-normal text-xs sm:text-sm text-gray-400">
-                                                    <p class="break-words">{!! nl2br(e(strlen($thread->body) > 200 ? substr($thread->body, 0, 200).'...' : $thread->body)) !!}</p>
+                                                    <p class="break-words">{!! nl2br(e(strlen($thread->body) > 200 ? substr($thread->body, 0, 200) . '...' : $thread->body)) !!}</p>
                                                 </div>
                                             </div>
-    
+
                                             <div class="flex gap-4 mt-4 text-gray-500 text-sm">
                                                 <small>{{ isset($thread->created_at) ? $thread->created_at->format('d F Y') : '' }}</small>
                                                 <small>|</small>
@@ -68,10 +85,7 @@
                                         </div>
 
                                         <div class="hidden sm:flex flex-col gap-4 items-center min-w-[20%] lg:min-w-[10%] pr-3">
-                                            <img 
-                                                class="w-16 h-16 rounded-xl" 
-                                                src="{{ isset($thread->author->avatar) ? asset('storage/avatars/'.$thread->author->avatar) : asset('assets/images/avatar-default.png') }}" 
-                                                alt="User avatar">
+                                            <img class="w-16 h-16 rounded-xl" src="{{ isset($thread->author->avatar) ? asset('storage/avatars/' . $thread->author->avatar) : asset('assets/images/avatar-default.png') }}" alt="User avatar">
                                             <div class="text-center w-full break-words">
                                                 <p class="text-sm">{{ $thread->author->username }}</p>
                                                 <small class="text-xs text-gray-500">{{ $thread->author->credit }} Credit</small>
@@ -82,7 +96,7 @@
                             </div>
                         @endforeach
                     </div>
-                
+
                     {{ $threads->links('pagination::tailwind') }}
                 </div>
             </div>

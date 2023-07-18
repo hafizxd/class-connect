@@ -12,6 +12,8 @@ class ThreadCreate extends Component
     public $title;
     public $body;
 
+    public $forumId;
+
     protected $listeners = ['close-card' => 'closeCardForAlpine'];
 
     public function store()
@@ -22,6 +24,7 @@ class ThreadCreate extends Component
         ]);
 
         $thread = Thread::create([
+            'forum_id' => $this->forumId,
             'user_id' => Auth::user()->id,
             'title' => $this->title,
             'slug' => Str::slug($this->title),
